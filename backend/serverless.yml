@@ -9,11 +9,12 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   lambdaHashingVersion: '20201221'
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
+  profile: ${opt:profile, 'superuser'}
 
   tracing:
     lambda: true
@@ -26,7 +27,6 @@ provider:
     SIGNED_URL_EXPIRATION: 300
 
   logs:
-    # Enable API Gateway logs
     restApi: true
 
   iam:
@@ -34,9 +34,9 @@ provider:
       statements:
         - Effect: Allow
           Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resource: "*"
+            - 'xray:PutTelemetryRecords'
+            - 'xray:PutTraceSegments'
+          Resource: '*'
 
 functions:
   Auth:
@@ -48,12 +48,13 @@ functions:
           method: get
           path: todos
           cors: true
-          authorizer: Auth
+          authorizer:
+            name: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}'
+        Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/*'
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     events:
@@ -61,11 +62,11 @@ functions:
           method: post
           path: todos
           cors: true
-          authorizer: Auth
+          authorizer:
+            name: Auth
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
-    iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -78,11 +79,11 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
-          authorizer: Auth
+          authorizer:
+            name: Auth
           request:
             schemas:
               application/json: ${file(models/update-todo-model.json)}
-    iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -95,8 +96,8 @@ functions:
           method: delete
           path: todos/{todoId}
           cors: true
-          authorizer: Auth
-    iamRoleStatementsInherit: true
+          authorizer:
+            name: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -109,13 +110,13 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true
-          authorizer: Auth
-    iamRoleStatementsInherit: true
+          authorizer:
+            name: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
           - s3:*
-        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}
+        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
 
 resources:
   Resources:
@@ -169,6 +170,7 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
+        AccessControl: PublicReadWrite
         CorsConfiguration:
           CorsRules:
             - AllowedMethods:

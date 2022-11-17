@@ -7,7 +7,7 @@ import { createAttachmentPresignedUrl } from '../../businessLogic/todos'
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
     
-	const url = await createAttachmentPresignedUrl(todoId)
+	const uploadUrl = await createAttachmentPresignedUrl(todoId)
 
     return {
 		statusCode: 200,
@@ -15,7 +15,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 			'Access-Control-Allow-Origin': '*'
 		},
 		body: JSON.stringify({
-			url
+			uploadUrl
 		})
 	}
 }
