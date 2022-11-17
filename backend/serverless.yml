@@ -24,7 +24,6 @@ provider:
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
     ATTACHMENT_S3_BUCKET: serverless-todo-images-bucket-${self:provider.stage}-vic
-    SIGNED_URL_EXPIRATION: 300
 
   logs:
     restApi: true
@@ -170,7 +169,6 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
-        AccessControl: PublicReadWrite
         CorsConfiguration:
           CorsRules:
             - AllowedMethods:
@@ -193,8 +191,9 @@ resources:
           Version: '2012-10-17'
           Statement:
             - Action:
-                - 's3:GetObject'
+                - 's3:PutObjectAcl'
                 - 's3:PutObject'
+                - 's3:GetObject'
               Effect: Allow
               Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
               Principal: '*'

@@ -10,7 +10,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 	const uploadUrl = await createAttachmentPresignedUrl(todoId)
 
     return {
-		statusCode: 200,
+		statusCode: 202,
 		headers: {
 			'Access-Control-Allow-Origin': '*'
 		},
