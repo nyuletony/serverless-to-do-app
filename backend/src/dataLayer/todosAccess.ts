@@ -1,8 +1,7 @@
 import * as AWS from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { S3Client, PutObjectCommand} from "@aws-sdk/client-s3"
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+
 
 import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
@@ -15,7 +14,7 @@ export class TodosAccess {
 		private readonly docClient: DocumentClient = new (AWSXRay.captureAWS(AWS)).DynamoDB.DocumentClient(),
 		private readonly todosTable = process.env.TODOS_TABLE,
 		private readonly todosIndex = process.env.TODOS_CREATED_AT_INDEX,
-		private readonly s3Bucket = process.env.ATTACHMENT_S3_BUCKET
+		
 	){}
 
 	async getAllTodos(userId: string): Promise<TodoItem[]> {
@@ -112,16 +111,4 @@ export class TodosAccess {
 		logger.info('todo-attachment-url updated')
 	}
 
-	async getUploadUrl(todoId: string): Promise<string> {
-
-		const client = new S3Client({ region: 'us-east-1' })
-		const command = new PutObjectCommand({
-			Bucket: this.s3Bucket,
-			Key: todoId
-		});
-
-		const url = await getSignedUrl(client, command, { expiresIn: 300 });
-
-		return url
-	}
 }

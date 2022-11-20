@@ -4,7 +4,7 @@ import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
 import { TodoUpdate } from '../models/TodoUpdate';
-
+import { getUploadUrl } from '../fileStorage/attachmentUtils'
 
 const logger = createLogger('TodosAccessPreLogger')
 const todosAccess = new TodosAccess()
@@ -48,7 +48,7 @@ async function createAttachmentPresignedUrl(todoId: string): Promise<string> {
 	
 	logger.info('about to acquire a presigned url...')
 
-	return await todosAccess.getUploadUrl(todoId)
+	return await getUploadUrl(todoId)
 }
 
 export { getTodosForUser, createTodo, updateTodo, deleteTodo, createAttachmentPresignedUrl }

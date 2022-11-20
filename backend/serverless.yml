@@ -1,6 +1,6 @@
-org: machariavck
-app: serverless-todo-app
-service: serverless-todo-app
+org: nyuletony
+app: serverless-udagram-app
+service: serverless-udagram-app
 
 plugins:
   - serverless-iam-roles-per-function
@@ -14,7 +14,6 @@ provider:
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
-  profile: ${opt:profile, 'superuser'}
 
   tracing:
     lambda: true
@@ -23,7 +22,7 @@ provider:
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: serverless-todo-images-bucket-${self:provider.stage}-vic
+    ATTACHMENT_S3_BUCKET: serverless-to-do-images-bucket-${self:provider.stage}
 
   logs:
     restApi: true

@@ -9,7 +9,7 @@ import { JwtPayload } from '../../auth/JwtPayload'
 
 const logger = createLogger('auth')
 
-const jwksUrl = 'https://dev-80vgshwlwpsyj102.uk.auth0.com/.well-known/jwks.json'
+const jwksUrl = 'https://dev-xcq3pl7siowa4fbr.us.auth0.com/.well-known/jwks.json'
 
 export const handler = async (event): Promise<CustomAuthorizerResult> => {
   logger.info('Authorizing a user', event.authorizationToken)
