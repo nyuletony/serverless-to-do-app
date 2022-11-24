@@ -1,6 +1,7 @@
 import * as AWS from 'aws-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
+import * as AWSXRay from 'aws-xray-sdk'
 
 import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
@@ -10,7 +11,7 @@ const logger = createLogger('TodosAccessLogger')
 
 export class TodosAccess {
 	constructor(
-		private readonly docClient: DocumentClient = new AWS.DynamoDB.DocumentClient(),
+		private readonly docClient: DocumentClient = new (AWSXRay.captureAWS(AWS)).DynamoDB.DocumentClient(),
 		private readonly todosTable = process.env.TODOS_TABLE,
 		private readonly todosIndex = process.env.TODOS_CREATED_AT_INDEX,
 		
